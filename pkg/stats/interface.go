@@ -2,58 +2,29 @@ package stats
 
 import (
 	"fmt"
+	"io"
 
-	"log"
-
-	"gopkg.in/alexcesaro/statsd.v2"
+	"github.com/cactus/go-statsd-client/statsd"
 )
 
 type Metrics interface {
 	Increment(string)
-	Gauge(string, interface{})
-	TimingStart() Timer
+	Gauge(string, int64)
+	TimeMillisecond(string, float32)
+
+	io.Closer
 }
 
 type Timer interface {
 	Send(string)
 }
 
-type statsdTime struct {
-	ns string
-	t  statsd.Timing
-}
-
-func (t statsdTime) Send(n string) {
-	log.Printf("Time %s.%s at %dms", t.ns, n, t.t.Duration().Microseconds())
-	t.t.Send(n)
-}
-
-type statsdMetric struct {
-	ns     string
-	daemon *statsd.Client
-}
-
-func (s statsdMetric) Increment(n string) {
-	log.Printf("Increment %s.%s", s.ns, n)
-	s.daemon.Increment(n)
-}
-
-func (s statsdMetric) Gauge(n string, value interface{}) {
-	log.Printf("Gauge %s.%s at %v", s.ns, n, value)
-	s.daemon.Gauge(n, value)
-}
-
-func (s statsdMetric) TimingStart() Timer {
-	return statsdTime{
-		ns: s.ns,
-		t:  s.daemon.NewTiming(),
-	}
-}
-
 func NewCounter(ns string) (Metrics, error) {
-	client, err := statsd.New(
-		statsd.Prefix(ns),
-	)
+	cfg := &statsd.ClientConfig{
+		Address: "127.0.0.1:8125",
+		Prefix:  ns,
+	}
+	client, err := statsd.NewClientWithConfig(cfg)
 	if err != nil {
 		return nil, fmt.Errorf("statsd connect: %s", err)
 	}

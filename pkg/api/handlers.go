@@ -13,8 +13,8 @@ import (
 func randomNum(m stats.Metrics) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		t := m.TimingStart()
-		defer t.Send("latency")
+		t := time.Now()
+		defer m.TimeMillisecond("latency", float32(time.Since(t).Milliseconds()))
 
 		// Create fake latency
 		n := rand.Intn(500)
@@ -39,6 +39,6 @@ func goroutines(m stats.Metrics) http.HandlerFunc {
 		w.Header().Add("Content-Type", "application/json")
 		w.Write([]byte(resp))
 
-		m.Gauge("request_count_gr", gr)
+		m.Gauge("request_count_gr", int64(gr))
 	}
 }
