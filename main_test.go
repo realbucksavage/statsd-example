@@ -3,6 +3,9 @@ package main
 import (
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"os/signal"
+	"syscall"
 	"testing"
 	"time"
 
@@ -23,11 +26,19 @@ func TestGauge(t *testing.T) {
 	client := &http.Client{}
 
 	t.Log("Creating 20 GoRoutines data per second.")
-	for i := 0; i < 20; i++ {
-		if _, err := client.Get("http://" + server.Listener.Addr().String()); err != nil {
-			t.Fatal(err)
-		}
+	go func() {
+		for {
+			if _, err := client.Get("http://" + server.Listener.Addr().String()); err != nil {
+				t.Fatal(err)
+			}
 
-		time.Sleep(1 * time.Second)
-	}
+			time.Sleep(1 * time.Second)
+		}
+	}()
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+	<-quit
+	t.Log("Test complete.")
 }
