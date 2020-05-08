@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/realbucksavage/statsd-example/pkg/api"
 	"github.com/realbucksavage/statsd-example/pkg/stats"
@@ -26,5 +27,7 @@ func TestGauge(t *testing.T) {
 		if _, err := client.Get("http://" + server.Listener.Addr().String()); err != nil {
 			t.Fatal(err)
 		}
+
+		time.Sleep(1 * time.Second)
 	}
 }
