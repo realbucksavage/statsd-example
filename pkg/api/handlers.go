@@ -39,6 +39,6 @@ func goroutines(m stats.Metrics) http.HandlerFunc {
 		w.Header().Add("Content-Type", "application/json")
 		w.Write([]byte(resp))
 
-		m.Increment("request_count_gr")
+		m.Gauge("request_count_gr", gr)
 	}
 }
