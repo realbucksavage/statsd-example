@@ -3,8 +3,9 @@ package stats
 import (
 	"fmt"
 
-	"gopkg.in/alexcesaro/statsd.v2"
 	"log"
+
+	"gopkg.in/alexcesaro/statsd.v2"
 )
 
 type Metrics interface {
@@ -23,7 +24,7 @@ type statsdTime struct {
 }
 
 func (t statsdTime) Send(n string) {
-	fmt.Printf("Time %s.%s at %dms", t.ns, n, t.t.Duration().Microseconds())
+	log.Printf("Time %s.%s at %dms", t.ns, n, t.t.Duration().Microseconds())
 	t.t.Send(n)
 }
 

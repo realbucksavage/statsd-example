@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	m, err := stats.NewCounter("testapp")
+	m, err := stats.NewCounter("testapi")
 	if err != nil {
 		log.Fatal(err)
 	}
