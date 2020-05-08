@@ -3,12 +3,15 @@ package main
 import (
 	"net/http"
 
-	"github.com/prometheus/common/log"
 	"github.com/realbucksavage/statsd-example/pkg/api"
 	"github.com/realbucksavage/statsd-example/pkg/stats"
+
+	"log"
 )
 
 func main() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
 	m, err := stats.NewCounter("testapi")
 	if err != nil {
 		log.Fatal(err)
