@@ -1,24 +1,18 @@
 package main
 
 import (
-	"log"
-	"runtime"
-	"time"
+	"net/http"
 
-	"gopkg.in/alexcesaro/statsd.v2"
+	"github.com/prometheus/common/log"
+	"github.com/realbucksavage/statsd-example/pkg/api"
+	"github.com/realbucksavage/statsd-example/pkg/stats"
 )
 
 func main() {
-	c, err := statsd.New()
+	m, err := stats.NewCounter("testapp")
 	if err != nil {
-		log.Fatalf("start statsd client: %s", err)
+		log.Fatal(err)
 	}
-	defer c.Close()
 
-	c.Increment("testapp.counter")
-	c.Gauge("testapp.goroutines", runtime.NumGoroutine())
-
-	t := c.NewTiming()
-	time.Sleep(500 * time.Millisecond)
-	t.Send("testapp.latency")
+	http.ListenAndServe(":8080", api.NewRouter(m))
 }
