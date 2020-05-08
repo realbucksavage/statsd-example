@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"gopkg.in/alexcesaro/statsd.v2"
+	"log"
 )
 
 type Metrics interface {
@@ -22,7 +23,8 @@ type statsdTime struct {
 }
 
 func (t statsdTime) Send(n string) {
-	t.t.Send(t.ns + "." + n)
+	fmt.Printf("Time %s.%s at %dms", t.ns, n, t.t.Duration().Microseconds())
+	t.t.Send(n)
 }
 
 type statsdMetric struct {
@@ -31,11 +33,13 @@ type statsdMetric struct {
 }
 
 func (s statsdMetric) Increment(n string) {
-	s.daemon.Increment(s.ns + "." + n)
+	log.Printf("Increment %s.%s", s.ns, n)
+	s.daemon.Increment(n)
 }
 
 func (s statsdMetric) Gauge(n string, value interface{}) {
-	s.daemon.Gauge(s.ns+"."+n, value)
+	log.Printf("Gauge %s.%s at %v", s.ns, n, value)
+	s.daemon.Gauge(n, value)
 }
 
 func (s statsdMetric) TimingStart() Timer {
@@ -46,7 +50,9 @@ func (s statsdMetric) TimingStart() Timer {
 }
 
 func NewCounter(ns string) (Metrics, error) {
-	client, err := statsd.New()
+	client, err := statsd.New(
+		statsd.Prefix(ns),
+	)
 	if err != nil {
 		return nil, fmt.Errorf("statsd connect: %s", err)
 	}

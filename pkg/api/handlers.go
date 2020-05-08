@@ -26,7 +26,7 @@ func randomNum(m stats.Metrics) http.HandlerFunc {
 		w.Header().Add("Content-Type", "application/json")
 		w.Write([]byte(resp))
 
-		m.Increment("request_count:/random")
+		m.Increment("request_count_random")
 	}
 }
 
@@ -39,6 +39,6 @@ func goroutines(m stats.Metrics) http.HandlerFunc {
 		w.Header().Add("Content-Type", "application/json")
 		w.Write([]byte(resp))
 
-		m.Increment("request_count:/gr")
+		m.Increment("request_count_gr")
 	}
 }
