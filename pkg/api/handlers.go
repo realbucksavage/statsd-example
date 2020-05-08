@@ -14,13 +14,13 @@ func randomNum(m stats.Metrics) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		t := time.Now()
-		defer m.TimeMillisecond("latency", float32(time.Since(t).Milliseconds()))
+		defer m.Time("latency", time.Since(t))
 
 		// Create fake latency
 		n := rand.Intn(500)
 		time.Sleep(time.Millisecond * time.Duration(n))
 
-		resp := fmt.Sprintf(`{"num": %d}`, rand.Intn(100))
+		resp := fmt.Sprintf(`{"latency_ms": %d}`, rand.Intn(100))
 
 		w.WriteHeader(http.StatusOK)
 		w.Header().Add("Content-Type", "application/json")
@@ -33,7 +33,7 @@ func randomNum(m stats.Metrics) http.HandlerFunc {
 func goroutines(m stats.Metrics) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		gr := runtime.NumGoroutine()
-		resp := fmt.Sprintf(`{"num": %d}`, gr)
+		resp := fmt.Sprintf(`{"go_routines": %d}`, gr)
 
 		w.WriteHeader(http.StatusOK)
 		w.Header().Add("Content-Type", "application/json")
