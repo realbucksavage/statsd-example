@@ -14,7 +14,6 @@ func randomNum(m stats.Metrics) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		t := time.Now()
-		defer m.Time("latency", time.Since(t))
 
 		// Create fake latency
 		n := rand.Intn(500)
@@ -27,6 +26,7 @@ func randomNum(m stats.Metrics) http.HandlerFunc {
 		w.Write([]byte(resp))
 
 		m.Increment("request_count_random")
+		m.Time("latency", time.Since(t))
 	}
 }
 
