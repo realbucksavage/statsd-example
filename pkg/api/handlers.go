@@ -42,3 +42,10 @@ func goroutines(m stats.Metrics) http.HandlerFunc {
 		m.Gauge("request_count_gr", int64(gr))
 	}
 }
+
+func healthCheck() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(`ok`))
+	}
+}

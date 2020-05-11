@@ -11,6 +11,7 @@ func NewRouter(m stats.Metrics) http.Handler {
 	r := mux.NewRouter()
 	r.Handle("/", goroutines(m))
 	r.Handle("/random", randomNum(m))
+	r.Handle("/health", healthCheck())
 
 	return r
 }
